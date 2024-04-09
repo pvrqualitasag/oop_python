@@ -1,0 +1,348 @@
+---
+title: "Object Oriented Programming in Python"
+author: "Peter von Rohr"
+format: revealjs
+filters:
+  - pyodide
+---
+
+## Goals
+
+* Basic introduction to object-oriented programming (OOP)
+* Not considered here: 
+    + Inheritance
+    + Polymorphism
+* Examples in python
+* Material: "Team-interne hands-on Weiterbildung"
+    + https://qualitasag.atlassian.net/wiki/spaces/ZWS/pages/3597828106/2024-04-09+Introduction+to+Object+Oriented+Programming+in+Python
+
+
+## What is OOP
+
+* Design paradigm or strategy
+* Emphasis on data more than on logic and function
+* Focus on what to manipulate rather than how to manipulate
+* __Not__: Property of programming language
+* But: different languages (and IDEs) have different level of support for OOP
+
+
+## Example
+
+* Manage information on livestock animals
+* Use OOP approach (non-OOP part skipped)
+
+```{mermaid}
+flowchart TB
+    A["`CH120.00.01`"]
+    B(["`CH120.00.05`"])
+    C["`CH120.00.02`"]
+    D(["`CH120.00.06`"])
+    E(["`Name: Berta
+    ID: CH120.00.010
+    Birthdate: 20230321`"])
+    F["`Name: Emil
+    ID: CH120.00.011
+    Birthdate: 20221101`"]
+    A --> E
+    B --> E
+    C --> F
+    D --> F
+```
+
+## Design
+
+Questions before starting to write code ...
+
+* Relevant objects and their properties?
+* Blue-print of objects are classes
+
+```{r}
+#| results: asis
+#rmdhelp::use_odg_graphic(ps_path = "odg/obj_design.odg")
+cat("![](odg/obj_design.png){width=400, fig-align=\"right\"}\n")
+```
+
+
+## Classes and Datatypes
+
+* Examples of existing datatypes in python
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+* Integer: `int`
+
+```{python}
+#| echo: true
+x = 1
+type(x)
+```
+
+* String: `str`
+
+```{python}
+#| echo: true
+s_name = "Berta"
+type(s_name)
+```
+
+:::
+
+::: {.column width="60%"}
+
+```{r}
+#| results: asis
+#rmdhelp::use_odg_graphic(ps_path = "odg/int_memory_map.odg")
+cat("![](odg/int_memory_map.png){width=320, fig-align=\"right\"}\n")
+```
+
+:::
+
+::::
+
+
+
+## Class as User-Defined Datatype
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+* Example: Class Animal
+* Properties
+    + Name
+    + Birthdate
+
+:::
+
+::: {.column width="60%"}
+
+```{r}
+#| results: asis
+#rmdhelp::use_odg_graphic(ps_path = "odg/obj_memory_map.odg")
+cat("![](odg/obj_memory_map.png){width=320, fig-align=\"right\"}\n")
+```
+
+
+:::
+
+::::
+
+
+
+## Class Definition
+
+* An "empty" class: demo of concept, not useful
+
+```{pyodide-python}
+# empty class
+class Animal:
+  """Empty class to represent data on animals"""
+  def __init__(self) -> None:
+    """Empty constructor"""
+    pass
+
+# create an object instance
+obj_ani_empty1 = Animal()
+obj_ani_empty2 = Animal()
+```
+
+* Add attributes to store data on animals
+
+
+## Attributes
+
+```{pyodide-python}
+class Animal:
+  def __init__(self) -> None:
+    """Constructor with attributes"""
+    self.name = None
+    self.birthdate = None
+
+# create object instance
+obj_ani1 = Animal()
+```
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+*  `self.<attribute_name>` reserves memory to store data
+
+:::
+
+::: {.column width="60%"}
+
+```{r}
+#| results: asis
+# rmdhelp::use_odg_graphic(ps_path = "odg/attribute_memory_map.odg")
+cat("![](odg/attribute_memory_map.png){width=400, fig-align=\"right\"}\n")
+```
+
+
+:::
+
+::::
+
+
+
+## Direct Assignment and Direct Access
+
+```{pyodide-python}
+class Animal:
+  def __init__(self) -> None:
+    """Constructor with attributes"""
+    self.name = None
+    self.birthdate = None
+
+# create object instance
+obj_ani1 = Animal()
+# direct assignment
+obj_ani1.name = "Berta"
+obj_ani1.birthdate = "20230621"
+# direct access
+print(obj_ani1.name)
+print(obj_ani1.birthdate)
+```
+
+* Not recommended in OOP
+* Requires internal knowledge about class design
+* No advantage over solution with dictionary
+
+
+## Setter and Getter Methods
+
+```{pyodide-python}
+class Animal:
+  def __init__(self) -> None:
+    """Constructor with attributes"""
+    self.name = None
+    self.birthdate = None
+  # setter and getter methods for name
+  def set_name(self, ps_name: str) -> None:
+    self.name = ps_name
+  def get_name(self) -> str:
+    return self.name
+  def set_birthdate(self, ps_birthdate: str) -> None:
+    self.birthdate = ps_birthdate
+  def get_birthdate(self) -> str:
+    return self.birthdate
+# instance
+obj_ani1 = Animal()
+obj_ani1.set_name(ps_name = "Berta")
+obj_ani1.set_birthdate(ps_birthdate = "20230321")
+```
+
+
+## Class Interface
+
+* Declaration and documentation of methods
+* For our example
+
+```
+set_name(self, ps_name: str) -> None:
+  """Set name of animal"""
+  
+get_name(self) -> str:
+  """Get name of animal"""
+  
+set_birthdate(self, ps_birthdate: str) -> None:
+  """Set birthdate of animal"""
+  
+get_birthdate(self) -> str:
+  """Get birthdate of animal"""  
+```
+
+
+## Abstraction and Decoupling
+
+* Advantage of class interface with new property: `age_in_days`
+* Do __not__ add attribute, like
+
+```{r}
+#| results: asis
+# rmdhelp::use_odg_graphic(ps_path = "odg/attribute_age_in_days.odg")
+cat("![](odg/attribute_age_in_days.png){width=500, fig-align=\"left\"}\n")
+```
+
+* Because: redundancy in attributes
+
+
+## Extended Interface
+
+* Add property `age_in_days` to interface
+* Extend class interface by
+
+```
+set_age_in_days(self, pn_age_in_days: int) -> None:
+    """Set age in days of animal"""
+
+get_age_in_days(self) -> int:
+    """Get age in days of animal"""
+```
+
+
+## Implementation
+
+```{pyodide-python}
+import datetime
+class Animal:
+  def __init__(self) -> None:
+    self.name = None
+    self.birthdate = None
+  # setter and getter methods for name
+  def set_name(self, ps_name: str) -> None:
+    self.name = ps_name
+  def get_name(self) -> str:
+    return self.name
+  def set_birthdate(self, ps_birthdate: str) -> None:
+    self.birthdate = ps_birthdate
+  def get_birthdate(self) -> str:
+    return self.birthdate
+  # property age_in_days
+  def set_age_in_days(self, pn_age_in_days: int) -> None:
+    bdate = datetime.datetime.now().date() - \
+            datetime.timedelta(days = pn_age_in_days)
+    self.birthdate = bdate.strftime("%Y%m%d")
+  def get_age_in_days(self) -> int:
+    dt_birth_date = datetime.datetime.strptime(self.birthdate, "%Y%m%d").date()
+    delta = datetime.datetime.now().date() - dt_birth_date
+    return delta.days  
+```
+
+
+## Parameterized Constructor
+
+```{pyodide-python}
+class Animal:
+  def __init__(self) -> None:
+    self.name = None
+    self.birthdate = None
+  # constructor with parameters
+  def __init__(self, ps_name: str, ps_birthdate: str) -> None:
+    self.name = ps_name
+    self.birthdate = ps_birthdate
+  # setter and getter methods for name
+  def get_name(self) -> str:
+    return self.name
+  def get_birthdate(self) -> str:
+    return self.birthdate
+# instance
+obj_ani1 = Animal(ps_name = "Berta", ps_birthdate = "20240331")  
+```
+
+
+## Summary
+
+* Focus more on data than on function and logic
+* Data modeled as objects
+* Classes as blue-print of objects
+* Use class interface 
+    + over direct assignment and acces
+    + to avoid redundancy in attributes
+    
+
+## Questions
+
+Thanks for your attention
